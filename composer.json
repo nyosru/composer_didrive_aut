@@ -1,0 +1,32 @@
+{
+    "name": "didrive/aut",
+    "description": "Авторизация didrive",
+
+    "version": "0.0.1",
+
+    "keywords": [
+        "didrive"
+    ],
+
+    "authors": [
+        {
+        "name": "Sergey Baklanov",
+        "email": "1@php-cat.com",
+        "homepage": "https://php-cat.com",
+        "role": "Developer"
+        }
+    ],
+
+    "homepage": "https://uralweb.info/php/#classes",
+    "license": "MIT",
+    
+    "require": {
+        "php": ">=7.3.0"
+        ,
+        "twig/twig": ">=2.10.0"
+    },
+    
+    "autoload": {
+        "files": [  "src/class.php" ]
+    }
+}
