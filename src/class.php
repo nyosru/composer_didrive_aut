@@ -228,7 +228,7 @@ class AUT {
 
             try {
 
-                $_SESSION[\Nyos\mod\Lk::$type] = \Nyos\Mod\Lk::enterSoc($db, ( isset($vv['folder']{0}) ? $vv['folder'] : null), $_POST['token'], 'didrive');
+                $_SESSION[\Nyos\mod\Lk::$type] = \Nyos\Mod\Lk::enterSoc($db, ( !empty(\Nyos\Nyos::$folder_now) ? \Nyos\Nyos::$folder_now : null), $_POST['token'], 'didrive');
 
 // если это я
                 if (
