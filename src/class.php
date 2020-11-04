@@ -214,28 +214,23 @@ class AUT {
 // проверка входа через соц. сервис
         elseif (isset($_POST['token']{1})) {
 
-// \f\pa($_POST);
-// require_once $_SERVER['DOCUMENT_ROOT'] . DS . 'module' . DS . 'lk' . DS . 'class.php';
-
-
             if (!class_exists('Nyos\\mod\\Lk')) {
-
-//throw new \NyosEx('Не обнаружен класс lk');
-                require_once DR . '/vendor/didrive_mod/lk/class.php';
+                throw new \Exception('Не обнаружен класс lk');
             }
 
             \Nyos\mod\Lk::$type = 'now_user_di';
 
             try {
 
-                $_SESSION[\Nyos\mod\Lk::$type] = \Nyos\Mod\Lk::enterSoc($db, ( !empty(\Nyos\Nyos::$folder_now) ? \Nyos\Nyos::$folder_now : null), $_POST['token'], 'didrive');
-
+                $_SESSION[\Nyos\mod\Lk::$type] = \Nyos\Mod\Lk::enterSoc($db, ( \Nyos\Nyos::$folder_now ?? null ), $_POST['token'], 'didrive');
+                
 // если это я
                 if (
 // vk
                         $_SESSION['now_user_di']['soc_web_id'] == '5903492' || $_SESSION['now_user_di']['uid'] == '5903492'
 // facebook
                         || $_SESSION['now_user_di']['soc_web_id'] == '10208107614107713'
+                        || $_SESSION['now_user_di']['uid'] == '10208107614107713'
                 )
                     $_SESSION['now_user_di']['access'] = 'admin';
 
@@ -249,17 +244,15 @@ class AUT {
 
                     \nyos\Msg::sendTelegramm('Вход в управление ' . PHP_EOL . PHP_EOL . $e, null, 1);
 
-// \Nyos\NyosMsg::sendTelegramm('Вход в управление ' . PHP_EOL . PHP_EOL . $e,null,1);
-
                     if (isset($vv['admin_auerific'])) {
                         foreach ($vv['admin_auerific'] as $k => $v) {
                             \nyos\Msg::sendTelegramm('Вход в управление ' . PHP_EOL . PHP_EOL . $e, $v);
-//\Nyos\NyosMsg::sendTelegramm('Вход в управление ' . PHP_EOL . PHP_EOL . $e, $k );
                         }
                     }
                 }
-
+                
                 \f\redirect('/', 'i.didrive.php', array('rand' => rand(0, 100), 'warn' => 'Вход произведён'));
+                
             } catch (\NyosEx $ex) {
 
 //            echo '<pre>--- ' . __FILE__ . ' ' . __LINE__ . '-------'
@@ -288,36 +281,22 @@ class AUT {
 //            . PHP_EOL . $ex->getTraceAsString()
 //            . '</pre>';
 
-                if (strpos($ex->getMessage(), 'no such table: gm_user')) {
-// создаём таблицу gm_user
-                    \Nyos\mod\Lk::creatTable($db);
+                // создаём таблицу gm_user / gm_user_option / gm_user_di_mod
+                if ( 
+                    ( strpos($ex->getMessage(), 'no such table: gm_user') )
+                    || (  strpos($ex->getMessage(), 'Table' ) !== false && strpos($ex->getMessage(), 'gm_user' ) !== false && strpos($ex->getMessage(), 'doesn\'t exist' ) !== false )
+                )
+                {
+                    \Nyos\Mod\Lk::creatTable($db);
                     \f\redirect('/', 'i.didrive.php', array('rand' => rand(0, 100), 'warn' => 'Таблица данных создана, просим войти повторно'));
                 }
-
+                
                 \f\redirect('/', 'i.didrive.php', array('rand' => rand(0, 100), 'warn' => $ex->getMessage()));
             }
 
-//die('11111');
-//exit;
         }
 
         return \f\end3('входите удобным способодом', false);
-
-//// $ttwig = $twig->loadTemplate('didrive/tpl/enter.htm');
-//        $ttwig = $twig->loadTemplate(\f\like_tpl('enter', $vv['sdd'] . '../tpl/', dir_site_tpldidr, DR));
-//        echo $ttwig->render($vv);
-//
-//// echo '<br/>' . __FILE__ . ' [' . __LINE__ . ']';
-//
-//        $r = ob_get_contents();
-//        ob_end_clean();
-//
-////        if ($_SERVER['HTTP_HOST'] == 'adomik.uralweb.info') {
-////            die('<br/>' . __FILE__ . ' ' . __LINE__);
-////        }
-//
-//        die($r);
-//die($r);
     }
 
 }
